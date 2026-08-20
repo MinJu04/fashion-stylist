@@ -163,17 +163,41 @@ def show_analyzing() -> str:
     return "사진과 질문을 분석 중입니다..."
 
 
+# 패션 서비스 느낌을 살리는 사용자 정의 스타일입니다.
+custom_css = """
+body { background: #f7f5f8 !important; }
+.gradio-container { max-width: 1220px !important; margin: 0 auto !important; }
+#hero { background: linear-gradient(135deg, #171326 0%, #332044 55%, #bd5b86 140%); border-radius: 26px; padding: 34px 40px; margin-bottom: 22px; color: white; box-shadow: 0 18px 45px rgba(49, 25, 58, .18); }
+#hero h1 { font-size: 38px; margin: 0 0 8px; letter-spacing: -1px; }
+#hero p { color: #eadfea; font-size: 16px; margin: 0; }
+.panel { background: white; border: 1px solid #eee7f0; border-radius: 20px; padding: 18px; box-shadow: 0 8px 24px rgba(40, 20, 50, .06); }
+.panel-title { color: #4b294d; font-size: 18px; font-weight: 700; margin: 2px 0 14px; }
+#analyze-btn { background: linear-gradient(90deg, #c65382, #8e5bb2); border: 0; color: white; font-weight: 700; border-radius: 12px; min-height: 48px; }
+#analyze-btn:hover { filter: brightness(1.06); }
+#chatbot { border-radius: 16px; overflow: hidden; }
+footer { display: none !important; }
+"""
+
 # 여러 화면 요소를 묶어 하나의 Gradio 웹 앱을 만듭니다.
-with gr.Blocks(title="패션 멀티모달 챗봇") as demo:
-    # 앱의 제목과 사용 방법을 화면에 표시합니다.
-    gr.Markdown("# 👗 사진으로 상담하는 패션 멀티모달 챗봇\n사진을 올리고 궁금한 점을 입력해 보세요.")
+with gr.Blocks(
+    title="LOOKBOOK AI | 패션 스타일리스트",
+    theme=gr.themes.Soft(primary_hue="pink", secondary_hue="purple", neutral_hue="slate"),
+    css=custom_css,
+) as demo:
+    gr.Markdown(
+        """<div id="hero">
+        <h1>LOOKBOOK AI 👗</h1>
+        <p>당신의 옷장에서 시작하는 개인 맞춤형 스타일링</p>
+        </div>"""
+    )
 
     # 화면을 왼쪽과 오른쪽 영역으로 나눕니다.
     with gr.Row():
         # 왼쪽 영역에는 사진 업로드와 상태 표시를 배치합니다.
-        with gr.Column(scale=1):
+        with gr.Column(scale=1, elem_classes="panel"):
+            gr.Markdown("### 01 · 스타일 정보", elem_classes="panel-title")
             # type="pil"을 사용해 업로드 사진을 PIL 이미지로 받습니다.
-            image_input = gr.Image(label="패션 사진 업로드", type="pil")
+            image_input = gr.Image(label="패션 사진 업로드", type="pil", height=300)
 
             season_input = gr.Dropdown(
                 ["현재 계절", "봄", "여름", "가을", "겨울"],
@@ -199,9 +223,10 @@ with gr.Blocks(title="패션 멀티모달 챗봇") as demo:
             )
 
         # 오른쪽 영역에는 챗봇과 질문 입력창을 배치합니다.
-        with gr.Column(scale=2):
+        with gr.Column(scale=2, elem_classes="panel"):
+            gr.Markdown("### 02 · AI 스타일 상담", elem_classes="panel-title")
             # type="messages"로 대화를 최신 메시지 형식으로 표시합니다.
-            chatbot = gr.Chatbot(label="패션 상담 채팅", height=500)
+            chatbot = gr.Chatbot(label="스타일리스트의 제안", height=500, elem_id="chatbot")
 
             # 사용자가 AI에게 보낼 질문을 입력합니다.
             message_input = gr.Textbox(
@@ -211,7 +236,9 @@ with gr.Blocks(title="패션 멀티모달 챗봇") as demo:
             )
 
             # 질문을 전송할 버튼을 만듭니다.
-            send_button = gr.Button("전송", variant="primary")
+            send_button = gr.Button("✨ 스타일 분석 시작", variant="primary", elem_id="analyze-btn")
+
+    gr.Markdown("사진 속 의상은 참고용으로 분석되며, 브랜드 추천은 스타일과 예산에 맞춘 후보입니다.")
 
     # 버튼을 누르면 먼저 분석 중 상태를 표시합니다.
     send_event = send_button.click(
