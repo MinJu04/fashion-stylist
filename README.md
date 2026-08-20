@@ -1,13 +1,3 @@
----
-title: Fashion Multimodal Stylist
-emoji: 👗
-colorFrom: pink
-colorTo: purple
-sdk: gradio
-python_version: "3.10"
-app_file: app.py
----
-
 ## Fashion Multimodal Stylist
 사진을 업로드하면 OpenAI 비전 모델이 의상을 분석하고 코디, 계절별 스타일, 색상과 브랜드 후보를 추천합니다.
 
